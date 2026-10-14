@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -8,6 +8,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useTransactionStore } from '../store/transactionStore';
 import { formatCurrency } from '../utils/formatCurrency';
 import { formatTransactionDateTime } from '../utils/formatDate';
+import { shareTransaction } from '../utils/shareTransaction';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TransactionDetail'>;
 
@@ -63,6 +64,21 @@ export const TransactionDetailScreen = ({ route }: Props) => {
           value={formatCurrency(transaction.amount)}
         />
       </View>
+      <Pressable
+        style={({ pressed }) => [
+          styles.shareButton,
+          pressed && styles.shareButtonPressed,
+        ]}
+        onPress={() => {
+          shareTransaction(transaction).catch(error => {
+            console.error('Failed to share transaction', error);
+          });
+        }}
+        accessibilityRole="button"
+        accessibilityLabel="Share transaction details"
+      >
+        <Text style={styles.shareButtonText}>Share Transaction</Text>
+      </Pressable>
     </ScrollView>
   );
 };
@@ -116,5 +132,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B6B6B',
     textAlign: 'center',
+  },
+  shareButton: {
+    marginTop: 24,
+    paddingVertical: 14,
+    borderRadius: 10,
+    backgroundColor: '#1A1A1A',
+    alignItems: 'center',
+  },
+  shareButtonPressed: {
+    opacity: 0.8,
+  },
+  shareButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

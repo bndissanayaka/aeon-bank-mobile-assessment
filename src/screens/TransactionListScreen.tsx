@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/types';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/ErrorState';
+import { LoadingState } from '../components/LoadingState';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { TransactionItem } from '../components/TransactionItem';
+import { RootStackParamList } from '../navigation/types';
 import { useTransactionStore } from '../store/transactionStore';
 
+type TransactionListNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'TransactionList'
+>;
+
 export const TransactionListScreen = () => {
+  const navigation = useNavigation<TransactionListNavigationProp>();
+
   const {
     transactions,
     isLoading,
@@ -27,29 +31,12 @@ export const TransactionListScreen = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  type TransactionListNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'TransactionList'
-  >;
-  const navigation = useNavigation<TransactionListNavigationProp>();
-
   if (isLoading) {
-    return (
-      <View style={styles.centeredContainer}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.statusText}>Loading transactions...</Text>
-      </View>
-    );
+    return <LoadingState message="Loading transactions..." />;
   }
 
   if (error && transactions.length === 0) {
-    return (
-      <View style={styles.centeredContainer}>
-        <Text style={styles.errorTitle}>Something went wrong</Text>
-
-        <Text style={styles.statusText}>{error}</Text>
-      </View>
-    );
+    return <ErrorState message={error} onRetry={fetchTransactions} />;
   }
 
   return (
@@ -72,19 +59,10 @@ export const TransactionListScreen = () => {
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.title}>Recent Transactions</Text>
-
             <Text style={styles.subtitle}>Your latest account activity</Text>
           </View>
         }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyTitle}>No transactions found</Text>
-
-            <Text style={styles.statusText}>
-              Your recent transactions will appear here.
-            </Text>
-          </View>
-        }
+        ListEmptyComponent={<EmptyState />}
         contentContainerStyle={
           transactions.length === 0 ? styles.emptyListContent : undefined
         }
@@ -98,12 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F7F7F7',
   },
-  centeredContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
+
   header: {
     paddingHorizontal: 16,
     paddingTop: 24,
@@ -118,26 +91,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     color: '#6B6B6B',
-  },
-  statusText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#6B6B6B',
-    textAlign: 'center',
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#C62828',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1A1A1A',
   },
   emptyListContent: {
     flexGrow: 1,

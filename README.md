@@ -1,8 +1,8 @@
 # AEON Bank Mobile Engineer Assessment
 
-A React Native mobile application that allows banking customers to view their latest transactions, inspect transaction details, and share transaction information using the native share sheet.
+A React Native mobile application that allows banking customers to view their latest transactions, search and browse transaction history, inspect transaction details, copy transaction reference IDs, and share transaction information using the native share sheet.
 
-The focus of this implementation is clean engineering practices, maintainable architecture, type safety, and production-ready structure rather than heavy UI customization.
+The focus of this implementation is clean engineering practices, maintainable architecture, type safety, reusable components, and production-ready structure rather than heavy UI customization.
 
 ## Tech Stack
 
@@ -11,23 +11,40 @@ The focus of this implementation is clean engineering practices, maintainable ar
 - Zustand
 - React Navigation
 - Jest
-- React Native Share API
+- React Native `Share` API
+- `@react-native-clipboard/clipboard`
+- `react-native-toast-message`
 
 ## Features
 
+- Welcome screen with simple banking-themed presentation
+- Purple and white application theme
+- Custom application launcher icon
 - View latest transactions
 - Transactions sorted from newest to oldest
+- Transactions grouped by transfer date
+- Search transactions by:
+  - recipient name
+  - transaction name
+  - reference ID
 - Positive amounts displayed in green
 - Negative amounts displayed in red
 - View transaction details
+- Copy transaction reference ID to clipboard
+- User feedback after copying a reference ID
 - Native transaction sharing using `Share.share()`
-- Loading state
+- Error feedback for failed sharing
+- Last updated timestamp after successful data retrieval
+- Initial loading state
 - Error state with retry
 - Empty state
+- Search-specific empty state
 - Pull-to-refresh
 - Type-safe navigation
 - Reusable UI components
+- Centralized colors and application strings
 - Unit tests for utility and business logic
+- Accessibility labels for interactive controls
 
 ## Project Structure
 
@@ -41,6 +58,9 @@ src/
 │   ├── ErrorState.tsx
 │   ├── LoadingState.tsx
 │   └── TransactionItem.tsx
+├── constants/
+│   ├── colors.ts
+│   └── strings.ts
 ├── mocks/
 │   └── transactions.ts
 ├── navigation/
@@ -48,29 +68,43 @@ src/
 │   └── types.ts
 ├── screens/
 │   ├── TransactionDetailScreen.tsx
-│   └── TransactionListScreen.tsx
+│   ├── TransactionListScreen.tsx
+│   └── WelcomeScreen.tsx
 ├── store/
 │   └── transactionStore.ts
 ├── types/
 │   └── transaction.ts
 └── utils/
+    ├── copyToClipboard.ts
     ├── formatCurrency.ts
     ├── formatDate.ts
+    ├── formatLastUpdated.ts
+    ├── groupTransactionsByDate.ts
     └── shareTransaction.ts
 ```
 
 ## Architecture
 
-The application separates presentation, state management, and data access responsibilities.
+The application separates presentation, application state, data access, and reusable business logic.
 
 ```text
-Screen
-  ↓
+Screens
+   ↓
 Zustand Store
-  ↓
+   ↓
 Transaction API Layer
-  ↓
+   ↓
 Mock Backend Response
+```
+
+Supporting utilities and reusable components remain independent from the data layer.
+
+```text
+Screens
+   ├── Components
+   ├── Formatting Utilities
+   ├── Clipboard Utility
+   └── Sharing Utility
 ```
 
 ### Screen Layer
@@ -78,11 +112,12 @@ Mock Backend Response
 Screens are responsible for:
 
 - rendering UI
-- reacting to user interaction
+- responding to user interaction
 - triggering store actions
 - navigation
+- managing local UI-only state such as the search query
 
-Screens do not directly own backend logic or data transformation.
+Screens do not directly own backend request logic.
 
 ### State Management
 
@@ -94,31 +129,42 @@ The transaction store manages:
 - initial loading state
 - refresh state
 - error state
+- last successful update timestamp
 - transaction lookup by reference ID
 
 Zustand was selected because it provides lightweight centralized state management with minimal boilerplate and is appropriate for the scope of this application.
+
+UI-only state such as the search query remains local to the screen because it does not need to be shared globally.
 
 ### API Layer
 
 The API layer abstracts the data source from the UI and store.
 
-Currently the application uses mock backend data, but the implementation can later be replaced with a real REST API without changing the screens.
-
-For example:
+Currently the application uses mock backend data, but the implementation can later be replaced with a real REST API without changing the screen layer.
 
 ```text
 Current:
-Screen → Store → Mock API
+Screen → Zustand Store → Mock API
 
 Future:
-Screen → Store → REST API
+Screen → Zustand Store → REST API
 ```
 
-### Navigation
+## Navigation
 
 Navigation is strongly typed using `RootStackParamList`.
 
-Only the transaction reference ID is passed to the transaction detail screen rather than passing the entire transaction object.
+The application currently contains three main screens:
+
+```text
+Welcome
+   ↓
+Transactions
+   ↓
+Transaction Details
+```
+
+Only the transaction reference ID is passed to the detail screen rather than passing the complete transaction object.
 
 ```ts
 navigation.navigate('TransactionDetail', {
@@ -126,15 +172,15 @@ navigation.navigate('TransactionDetail', {
 });
 ```
 
-The detail screen retrieves the latest transaction data from Zustand.
+The detail screen then retrieves the current transaction from Zustand.
 
 This avoids duplicating domain data in navigation state and reduces the risk of stale transaction information.
 
 ## Transaction Ordering
 
-Transactions are sorted by `transferDate` from newest to oldest before they reach the UI.
+Transactions are sorted by `transferDate` from newest to oldest before reaching the UI.
 
-The original response array is copied before sorting to avoid mutating the source data.
+The original backend response array is copied before sorting so the source data is not mutated.
 
 ```ts
 return [...mockTransactionResponse.data].sort(
@@ -143,30 +189,76 @@ return [...mockTransactionResponse.data].sort(
 );
 ```
 
+## Transaction Grouping
+
+Transactions are grouped by transfer date before being rendered.
+
+Grouping logic is implemented in a dedicated utility rather than directly inside the screen.
+
+The transaction list uses React Native's `SectionList`, which provides a natural structure for grouped transaction history.
+
+Example:
+
+```text
+15 Oct 2024
+
+Salary Payment
+John Doe                         +RM 1,500.00
+
+05 Oct 2024
+
+Refund
+Robert Brown                       -RM 500.00
+```
+
+## Search
+
+Users can search the transaction list using:
+
+- recipient name
+- transaction name
+- reference ID
+
+Search results are derived from the original transaction list using the search query.
+
+Filtered transactions are not stored separately in global state because they are derived data.
+
+This avoids unnecessary state duplication and synchronization issues.
+
 ## Loading and Refresh States
 
-Initial loading and pull-to-refresh are treated as separate states.
-
-This allows the application to show a full loading state on first load while keeping existing transactions visible during refresh.
+Initial loading and pull-to-refresh are represented separately.
 
 ```text
 Initial load
 → Full loading state
 
 Pull to refresh
-→ Existing list remains visible
+→ Existing transaction list remains visible
 → Native refresh indicator is shown
 ```
 
+This prevents the existing screen content from disappearing during a refresh operation.
+
+## Last Updated Timestamp
+
+The store records the time of the most recent successful transaction fetch or refresh.
+
+The timestamp is updated only after a successful data operation.
+
+This ensures the displayed time represents when the visible transaction data was actually refreshed.
+
 ## Error Handling
 
-Basic error handling is implemented for transaction loading and refreshing.
+Basic error handling is implemented for transaction loading, refreshing, and sharing.
 
-If the initial request fails, the user is shown an error state with a retry option.
+If the initial request fails, the user is shown a reusable error state with a retry action.
 
-If a refresh fails after transactions have already loaded, the existing data remains available rather than being removed.
+If a refresh fails after transaction data has already loaded, the existing data remains available rather than being removed.
 
-This prevents transient network failures from unnecessarily hiding previously loaded information.
+Sharing failures are logged and surfaced to the user through toast feedback.
+
+This prevents transient failures from unnecessarily disrupting the user experience.
 
 ## Reusable Components
 
@@ -178,13 +270,33 @@ Repeated UI patterns are extracted into reusable components, including:
 - `ErrorState`
 - `EmptyState`
 
-This keeps screens focused on orchestration instead of presentation details.
+`DetailRow` also supports an optional action, allowing functionality such as copying the transaction reference ID without creating a separate one-off component.
+
+This keeps screens focused on orchestration rather than repeated presentation logic.
+
+## Copy Reference ID
+
+The transaction detail screen allows the user to copy the transaction reference ID.
+
+Clipboard functionality is isolated in:
+
+```text
+src/utils/copyToClipboard.ts
+```
+
+The implementation uses:
+
+```text
+@react-native-clipboard/clipboard
+```
+
+After copying, the application provides user feedback confirming that the reference ID was copied successfully.
 
 ## Sharing
 
 Transaction details can be shared using React Native's native `Share.share()` API.
 
-The share message includes:
+The shared content includes:
 
 - reference ID
 - transaction name
@@ -192,13 +304,46 @@ The share message includes:
 - transfer date
 - transfer amount
 
-This opens the platform-native share sheet so users can choose their preferred sharing method.
+The native share sheet allows the user to choose their preferred sharing application.
+
+If sharing fails, the application handles the rejected promise and displays an error toast rather than allowing an unhandled error.
+
+## Theme and Constants
+
+Application colors are centralized in:
+
+```text
+src/constants/colors.ts
+```
+
+The primary visual theme uses purple and white while retaining semantic colors:
+
+- purple for primary actions and branding
+- white for surfaces
+- green for positive transaction values
+- red for negative values and errors
+
+User-facing application strings are centralized in:
+
+```text
+src/constants/strings.ts
+```
+
+This reduces duplicated literals and makes future localization easier.
 
 ## Accessibility
 
-Interactive transaction rows and the share button include accessibility roles and labels.
+Interactive elements include accessibility roles and labels where appropriate.
 
-This improves compatibility with screen readers while keeping the implementation lightweight.
+Examples include:
+
+- transaction rows
+- share transaction button
+- copy reference ID action
+- search input
+- retry actions
+
+This improves screen-reader support while keeping the implementation lightweight.
 
 ## Getting Started
 
@@ -234,7 +379,7 @@ npm install
 
 ## Running on iOS
 
-Install iOS dependencies:
+Install iOS native dependencies:
 
 ```bash
 cd ios
@@ -297,15 +442,17 @@ Run the test suite:
 npm test -- --runInBand
 ```
 
-The current test suite covers:
+The current automated tests cover:
 
 - positive currency formatting
 - negative currency formatting
-- short date formatting
-- detailed date formatting
+- short transaction date formatting
+- detailed transaction date formatting
 - latest-first transaction ordering
 
-The tests focus on deterministic utility and business logic rather than implementation details.
+Additional grouping logic can also be tested independently because it is implemented as a pure utility function.
+
+The test suite focuses on deterministic business and utility logic rather than implementation details.
 
 ## Assumptions
 
@@ -316,46 +463,73 @@ The tests focus on deterministic utility and business logic rather than implemen
 - `refId` is unique for each transaction.
 - The mock API represents the expected backend response structure.
 - The supplied transaction values are preserved as provided by the assessment.
+- The mock API delay exists only to represent asynchronous backend behavior.
 
 ## Engineering Decisions
 
 ### Why Zustand?
 
-Zustand provides centralized state with significantly less boilerplate than heavier state management libraries.
+Zustand provides centralized state with significantly less boilerplate than heavier state-management solutions.
 
-It also allows transaction state to be shared between the transaction list and detail screens without passing complete transaction objects through navigation.
+It allows transaction state to be shared between the list and detail screens without passing complete transaction objects through navigation.
 
 ### Why an API Layer?
 
 The API layer keeps data access separate from presentation and state management.
 
-This allows the mock implementation to be replaced by a real backend later without requiring changes to the UI.
+This allows the mock implementation to later be replaced with a real backend without requiring changes to the screen layer.
 
-### Why FlatList?
+### Why SectionList?
 
-Transaction history can grow significantly in a real banking application.
+The transaction history is now grouped by transfer date.
 
-`FlatList` provides:
+`SectionList` is more appropriate than rendering grouped transactions manually because it provides:
 
-- virtualization
+- list virtualization
+- section support
 - efficient rendering
 - stable key handling
-- pull-to-refresh support
+- pull-to-refresh
 - empty-state support
 
-This makes it more appropriate than rendering all transactions inside a `ScrollView`.
+It also scales more naturally as transaction history grows.
+
+### Why Keep Search State Local?
+
+The search query is only relevant to the transaction list screen.
+
+It does not need to be shared with other screens, so keeping it in local React state avoids unnecessary global state.
+
+Filtered transactions are derived using the source transaction array and the current query.
 
 ### Why Pass Only the Transaction ID?
 
 The full transaction already exists in application state.
 
-Passing only the reference ID avoids duplicating transaction data inside navigation state and ensures the detail screen reads the latest available version from the store.
+Passing only the reference ID avoids duplicating transaction data in navigation state and ensures the detail screen reads the latest version from the store.
 
 ### Why Separate Loading and Refreshing?
 
-Initial loading and refresh represent different user experiences.
+Initial loading and refreshing represent different user experiences.
 
-A full loader is appropriate when no data exists yet, while pull-to-refresh should keep the current transaction list visible.
+A full-screen loader is appropriate when no transaction data exists yet, while pull-to-refresh should preserve the existing transaction list.
+
+### Why Centralize Colors and Strings?
+
+Centralizing visual constants and user-facing strings improves consistency and reduces duplication.
+
+It also provides a simple foundation for future theming and localization without introducing an unnecessarily complex design system.
+
+### Why Reusable Utilities?
+
+Formatting, grouping, clipboard operations, and sharing are kept outside screen components.
+
+This improves:
+
+- readability
+- reuse
+- testability
+- separation of concerns
 
 ## Future Improvements
 
@@ -365,23 +539,24 @@ Given more time, the following improvements could be added:
 - Add API pagination for larger transaction histories
 - Add request caching
 - Add retry policies with exponential backoff
-- Add structured error models
+- Add structured API error models
 - Add authentication and secure API communication
+- Add offline transaction caching
 - Add end-to-end testing
-- Add component integration tests
-- Add offline support
+- Add more component and integration tests
+- Add dedicated tests for transaction grouping and search
 - Add localization
 - Add multi-currency support
-- Add centralized theme and design tokens
+- Add dark mode
+- Expand the current constants into a centralized design system
 - Add analytics and production logging
-- Add deep linking to transaction detail screens
-- Add transaction search and filtering
-- Add transaction grouping by date
+- Add deep linking directly to transaction detail screens
+- Add transaction filtering by transaction type or date range
 - Add CI checks for linting, type checking, and tests
 
 ## Validation
 
-Before submission, the project was validated using:
+Before submission, the project is validated using:
 
 ```bash
 npx tsc --noEmit
@@ -389,4 +564,4 @@ npm test -- --runInBand
 npm run lint
 ```
 
-All checks passed successfully.
+These checks validate TypeScript correctness, automated tests, and static code quality.

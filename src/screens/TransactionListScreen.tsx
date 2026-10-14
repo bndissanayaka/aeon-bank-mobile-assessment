@@ -88,6 +88,7 @@ export const TransactionListScreen = () => {
         refreshing={isRefreshing}
         onRefresh={refreshTransactions}
         stickySectionHeadersEnabled={false}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
             <View style={styles.header}>
@@ -129,10 +130,13 @@ export const TransactionListScreen = () => {
             <EmptyState />
           )
         }
-        contentContainerStyle={
-          sections.length === 0 ? styles.emptyListContent : undefined
-        }
+        contentContainerStyle={[
+          styles.listContent,
+          sections.length === 0 && styles.emptyListContent,
+        ]}
       />
+
+      <View style={styles.footer} />
     </View>
   );
 };
@@ -142,15 +146,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.primary,
-  },
+
   header: {
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 12,
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: COLORS.primary,
   },
 
   subtitle: {
@@ -190,7 +196,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
 
+  listContent: {
+    paddingBottom: 16,
+  },
+
   emptyListContent: {
     flexGrow: 1,
+  },
+
+  footer: {
+    height: 40,
+    backgroundColor: COLORS.primaryLight,
   },
 });

@@ -30,5 +30,27 @@ export const mockTransactionResponse: TransactionResponse = {
       transferName: 'Bonus Payment',
       amount: 1200.0,
     },
+
+    {
+      refId: '111DEF',
+      transferDate: '2025-01-21T09:12:45Z',
+      recipientName: 'Bhagya Dissanayaka',
+      transferName: 'Bill Payment',
+      amount: 800.25,
+    },
+    {
+      refId: '333GHI',
+      transferDate: '2023-03-05T16:18:30Z',
+      recipientName: 'Sebastian Mai Mai',
+      transferName: 'Cat Food',
+      amount: -1500.0,
+    },
+    {
+      refId: '444JKL',
+      transferDate: '2024-11-30T11:47:22Z',
+      recipientName: 'Chuti Putha',
+      transferName: 'Tution Fee',
+      amount: 1000.0,
+    },
   ],
 };

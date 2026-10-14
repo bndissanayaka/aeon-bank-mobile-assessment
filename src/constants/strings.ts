@@ -28,4 +28,5 @@ export const STRINGS = {
   viewTransactionsAccessibility: 'View transactions',
   copy: 'Copy',
   referenceIdCopied: 'Reference ID copied',
+  error: 'Error',
 } as const;

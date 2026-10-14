@@ -11,6 +11,7 @@ import { formatTransactionDateTime } from '../utils/formatDate';
 import { shareTransaction } from '../utils/shareTransaction';
 import { COLORS } from '../constants/colors';
 import { STRINGS } from '../constants/strings';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TransactionDetail'>;
 
@@ -89,8 +90,13 @@ export const TransactionDetailScreen = ({ route }: Props) => {
           pressed && styles.shareButtonPressed,
         ]}
         onPress={() => {
-          shareTransaction(transaction).catch(error => {
-            console.error(STRINGS.failedToShareTransaction, error);
+          shareTransaction(transaction).catch(() => {
+            Toast.show({
+              type: 'error',
+              text1: STRINGS.error,
+              text2: STRINGS.failedToShareTransaction,
+              position: 'bottom',
+            });
           });
         }}
         accessibilityRole="button"

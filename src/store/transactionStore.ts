@@ -1,12 +1,14 @@
 import { create } from 'zustand';
+
 import { getTransactions } from '../api/transactionApi';
 import { Transaction } from '../types/transaction';
-import { STRINGS } from '../constants/strings';
+
 interface TransactionState {
   transactions: Transaction[];
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
+  lastUpdated: number | null;
 
   fetchTransactions: () => Promise<void>;
   refreshTransactions: () => Promise<void>;
@@ -18,6 +20,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
   isLoading: false,
   isRefreshing: false,
   error: null,
+  lastUpdated: null,
 
   fetchTransactions: async () => {
     try {
@@ -31,11 +34,12 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
       set({
         transactions,
         isLoading: false,
+        lastUpdated: Date.now(),
       });
     } catch {
       set({
         isLoading: false,
-        error: STRINGS.unableToLoad,
+        error: 'Unable to load transactions.',
       });
     }
   },
@@ -52,11 +56,12 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
       set({
         transactions,
         isRefreshing: false,
+        lastUpdated: Date.now(),
       });
     } catch {
       set({
         isRefreshing: false,
-        error: STRINGS.unableToRefresh,
+        error: 'Unable to refresh transactions.',
       });
     }
   },

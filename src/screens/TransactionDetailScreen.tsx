@@ -24,11 +24,8 @@ export const TransactionDetailScreen = ({ route }: Props) => {
   if (!transaction) {
     return (
       <View style={styles.centeredContainer}>
-        <Text style={styles.errorTitle}>Transaction not found</Text>
-
-        <Text style={styles.errorText}>
-          The transaction details are unavailable.
-        </Text>
+        <Text style={styles.errorTitle}>{STRINGS.transcNotFound}</Text>
+        <Text style={styles.errorText}>{STRINGS.noTranscDetails}</Text>
       </View>
     );
   }
@@ -116,11 +113,7 @@ const styles = StyleSheet.create({
   negativeAmount: {
     color: COLORS.error,
   },
-  detailsCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-  },
+
   centeredContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -138,13 +131,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
   },
-  shareButton: {
-    marginTop: 24,
-    paddingVertical: 14,
-    borderRadius: 10,
-    backgroundColor: COLORS.buttonPrimary,
-    alignItems: 'center',
-  },
+
   shareButtonPressed: {
     opacity: 0.8,
   },
@@ -152,5 +139,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: COLORS.buttonText,
+  },
+  shareButton: {
+    marginTop: 24,
+    paddingVertical: 14,
+    borderRadius: 10,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+  },
+  detailsCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
   },
 });

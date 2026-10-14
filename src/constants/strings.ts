@@ -1,5 +1,6 @@
 export const STRINGS = {
   failedToShareTransaction: 'Failed to share transaction',
+  latestAccountActivity: 'Your latest account activity',
   noTransactionsFound: 'No transactions found',
   recentTransactions: 'Your recent transactions will appear here.',
   commonError: 'Something went wrong',
@@ -15,4 +16,10 @@ export const STRINGS = {
   latestActivity: 'Your latest account activity',
   unableToLoad: 'Unable to load transactions.',
   unableToRefresh: 'Unable to refresh transactions.',
+  searchTransactions: 'Search transactions',
+  noMatchingTransactions: 'No matching transactions',
+  lastUpdated: 'Last updated',
+  tryDifferentSearch:
+    'Try searching by recipient, transaction name, or reference ID.',
+  loadingTransactions: 'Loading transactions...',
 } as const;

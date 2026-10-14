@@ -1,17 +1,21 @@
 export const COLORS = {
-  background: '#F7F7F7',
+  primary: '#6C3FC5',
+  primaryDark: '#4E2A9D',
+  primaryLight: '#EDE7F6',
+
+  background: '#F8F6FC',
   surface: '#FFFFFF',
 
-  textPrimary: '#1A1A1A',
-  textSecondary: '#6B6B6B',
-  textMuted: '#777777',
-  textSubtle: '#8A8A8A',
+  textPrimary: '#1F1B2D',
+  textSecondary: '#6B6478',
+  textMuted: '#8A8297',
+  textSubtle: '#A39BAD',
 
-  border: '#E5E5E5',
+  border: '#E4DDF0',
 
   success: '#1B7F3A',
   error: '#C62828',
 
-  buttonPrimary: '#1A1A1A',
+  buttonPrimary: '#6C3FC5',
   buttonText: '#FFFFFF',
 } as const;

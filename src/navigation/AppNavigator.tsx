@@ -23,6 +23,7 @@ export const AppNavigator = () => {
         component={TransactionDetailScreen}
         options={{
           title: 'Transaction Details',
+          headerBackButtonDisplayMode: 'minimal',
         }}
       />
     </Stack.Navigator>

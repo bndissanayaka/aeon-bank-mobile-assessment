@@ -22,4 +22,8 @@ export const STRINGS = {
   tryDifferentSearch:
     'Try searching by recipient, transaction name, or reference ID.',
   loadingTransactions: 'Loading transactions...',
+  welcome: 'Welcome',
+  welcomeMessage: 'View and manage your recent transactions securely.',
+  viewTransactions: 'View Transactions',
+  viewTransactionsAccessibility: 'View transactions',
 } as const;

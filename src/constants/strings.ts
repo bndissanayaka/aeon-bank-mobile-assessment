@@ -26,4 +26,6 @@ export const STRINGS = {
   welcomeMessage: 'View and manage your recent transactions securely.',
   viewTransactions: 'View Transactions',
   viewTransactionsAccessibility: 'View transactions',
+  copy: 'Copy',
+  referenceIdCopied: 'Reference ID copied',
 } as const;

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { copyToClipboard } from '../utils/copyToClipboard';
 import { DetailRow } from '../components/DetailRow';
 import { RootStackParamList } from '../navigation/types';
 import { useTransactionStore } from '../store/transactionStore';
@@ -16,7 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'TransactionDetail'>;
 
 export const TransactionDetailScreen = ({ route }: Props) => {
   const { transactionId } = route.params;
-
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const transaction = useTransactionStore(state =>
     state.getTransactionById(transactionId),
   );
@@ -49,8 +49,25 @@ export const TransactionDetailScreen = ({ route }: Props) => {
       </View>
 
       <View style={styles.detailsCard}>
-        <DetailRow label={STRINGS.refId} value={transaction.refId} />
+        <DetailRow
+          label={STRINGS.refId}
+          value={transaction.refId}
+          actionLabel={STRINGS.copy}
+          onActionPress={() => {
+            copyToClipboard(transaction.refId);
 
+            setCopyMessage(STRINGS.referenceIdCopied);
+
+            setTimeout(() => {
+              setCopyMessage(null);
+            }, 2000);
+          }}
+        />
+        {copyMessage && (
+          <Text style={styles.copyMessage} accessibilityLiveRegion="polite">
+            {copyMessage}
+          </Text>
+        )}
         <DetailRow
           label={STRINGS.recipient}
           value={transaction.recipientName}
@@ -153,5 +170,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: COLORS.primaryLight,
+  },
+  copyMessage: {
+    marginTop: 8,
+    fontSize: 13,
+    fontWeight: '500',
+    color: COLORS.primary,
   },
 });

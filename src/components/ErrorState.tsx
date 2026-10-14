@@ -1,5 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../constants/colors';
+import { STRINGS } from '../constants/strings';
 
 interface ErrorStateProps {
   title?: string;
@@ -8,7 +10,7 @@ interface ErrorStateProps {
 }
 
 export const ErrorState = ({
-  title = 'Something went wrong',
+  title = STRINGS.commonError,
   message,
   onRetry,
 }: ErrorStateProps) => {
@@ -45,12 +47,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#C62828',
+    color: COLORS.error,
   },
   message: {
     marginTop: 8,
     fontSize: 14,
-    color: '#6B6B6B',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
   retryButton: {
@@ -58,13 +60,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: COLORS.buttonPrimary,
   },
   retryButtonPressed: {
     opacity: 0.8,
   },
   retryButtonText: {
-    color: '#FFFFFF',
+    color: COLORS.buttonText,
     fontSize: 14,
     fontWeight: '600',
   },

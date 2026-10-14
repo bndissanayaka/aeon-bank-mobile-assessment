@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-
+import { COLORS } from '../constants/colors';
 import { Transaction } from '../types/transaction';
 import { formatCurrency } from '../utils/formatCurrency';
 import { formatTransactionDate } from '../utils/formatDate';
@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E5E5',
+    backgroundColor: COLORS.surface,
+    borderBottomColor: COLORS.border,
   },
   pressed: {
     opacity: 0.7,
@@ -69,26 +69,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: COLORS.textPrimary,
     marginBottom: 4,
   },
   recipient: {
     fontSize: 14,
-    color: '#5C5C5C',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   date: {
     fontSize: 12,
-    color: '#8A8A8A',
+    color: COLORS.textSubtle,
   },
   amount: {
     fontSize: 16,
     fontWeight: '600',
   },
   positiveAmount: {
-    color: '#1B7F3A',
+    color: COLORS.success,
   },
   negativeAmount: {
-    color: '#C62828',
+    color: COLORS.error,
   },
 });

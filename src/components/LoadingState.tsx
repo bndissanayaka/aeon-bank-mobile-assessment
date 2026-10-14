@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-
+import { COLORS } from '../constants/colors';
 interface LoadingStateProps {
   message?: string;
 }
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   message: {
     marginTop: 8,
     fontSize: 14,
-    color: '#6B6B6B',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
 });

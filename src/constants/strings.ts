@@ -1,0 +1,18 @@
+export const STRINGS = {
+  failedToShareTransaction: 'Failed to share transaction',
+  noTransactionsFound: 'No transactions found',
+  recentTransactions: 'Your recent transactions will appear here.',
+  commonError: 'Something went wrong',
+  transcNotFound: 'Transaction not found',
+  noTranscDetails: 'The transaction details are unavailable.',
+  refId: 'Reference ID',
+  recipient: 'Recipient',
+  transferDate: 'Transfer Date',
+  transferAmount: 'Transfer Amount',
+  shareTransc: 'Share Transaction',
+  shareTranscDetails: 'Share transaction details',
+  recentTranscs: 'Recent Transactions',
+  latestActivity: 'Your latest account activity',
+  unableToLoad: 'Unable to load transactions.',
+  unableToRefresh: 'Unable to refresh transactions.',
+} as const;

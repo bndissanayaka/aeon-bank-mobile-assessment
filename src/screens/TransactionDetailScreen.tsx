@@ -9,6 +9,8 @@ import { useTransactionStore } from '../store/transactionStore';
 import { formatCurrency } from '../utils/formatCurrency';
 import { formatTransactionDateTime } from '../utils/formatDate';
 import { shareTransaction } from '../utils/shareTransaction';
+import { COLORS } from '../constants/colors';
+import { STRINGS } from '../constants/strings';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TransactionDetail'>;
 
@@ -50,17 +52,20 @@ export const TransactionDetailScreen = ({ route }: Props) => {
       </View>
 
       <View style={styles.detailsCard}>
-        <DetailRow label="Reference ID" value={transaction.refId} />
-
-        <DetailRow label="Recipient" value={transaction.recipientName} />
+        <DetailRow label={STRINGS.refId} value={transaction.refId} />
 
         <DetailRow
-          label="Transfer Date"
+          label={STRINGS.recipient}
+          value={transaction.recipientName}
+        />
+
+        <DetailRow
+          label={STRINGS.transferDate}
           value={formatTransactionDateTime(transaction.transferDate)}
         />
 
         <DetailRow
-          label="Transfer Amount"
+          label={STRINGS.transferAmount}
           value={formatCurrency(transaction.amount)}
         />
       </View>
@@ -71,13 +76,13 @@ export const TransactionDetailScreen = ({ route }: Props) => {
         ]}
         onPress={() => {
           shareTransaction(transaction).catch(error => {
-            console.error('Failed to share transaction', error);
+            console.error(STRINGS.failedToShareTransaction, error);
           });
         }}
         accessibilityRole="button"
-        accessibilityLabel="Share transaction details"
+        accessibilityLabel={STRINGS.shareTranscDetails}
       >
-        <Text style={styles.shareButtonText}>Share Transaction</Text>
+        <Text style={styles.shareButtonText}>{STRINGS.shareTransc}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -86,7 +91,7 @@ export const TransactionDetailScreen = ({ route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: COLORS.background,
   },
   content: {
     padding: 16,
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
   transferName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: COLORS.textPrimary,
     marginBottom: 8,
   },
   amount: {
@@ -106,13 +111,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   positiveAmount: {
-    color: '#1B7F3A',
+    color: COLORS.success,
   },
   negativeAmount: {
-    color: '#C62828',
+    color: COLORS.error,
   },
   detailsCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderRadius: 12,
     paddingHorizontal: 16,
   },
@@ -125,19 +130,19 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#C62828',
+    color: COLORS.error,
   },
   errorText: {
     marginTop: 8,
     fontSize: 14,
-    color: '#6B6B6B',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
   shareButton: {
     marginTop: 24,
     paddingVertical: 14,
     borderRadius: 10,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: COLORS.buttonPrimary,
     alignItems: 'center',
   },
   shareButtonPressed: {
@@ -146,6 +151,6 @@ const styles = StyleSheet.create({
   shareButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.buttonText,
   },
 });

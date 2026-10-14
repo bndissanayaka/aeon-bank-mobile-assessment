@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { getTransactions } from '../api/transactionApi';
 import { Transaction } from '../types/transaction';
-
+import { STRINGS } from '../constants/strings';
 interface TransactionState {
   transactions: Transaction[];
   isLoading: boolean;
@@ -35,7 +35,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
     } catch {
       set({
         isLoading: false,
-        error: 'Unable to load transactions.',
+        error: STRINGS.unableToLoad,
       });
     }
   },
@@ -56,7 +56,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
     } catch {
       set({
         isRefreshing: false,
-        error: 'Unable to refresh transactions.',
+        error: STRINGS.unableToRefresh,
       });
     }
   },

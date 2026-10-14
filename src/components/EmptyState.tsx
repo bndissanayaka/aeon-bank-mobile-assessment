@@ -1,14 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
+import { COLORS } from '../constants/colors';
+import { STRINGS } from '../constants/strings';
 interface EmptyStateProps {
   title?: string;
   message?: string;
 }
 
 export const EmptyState = ({
-  title = 'No transactions found',
-  message = 'Your recent transactions will appear here.',
+  title = STRINGS.noTransactionsFound,
+  message = STRINGS.recentTransactions,
 }: EmptyStateProps) => {
   return (
     <View style={styles.container}>
@@ -26,12 +27,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: COLORS.textPrimary,
   },
   message: {
     marginTop: 8,
     fontSize: 14,
-    color: '#6B6B6B',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
 });

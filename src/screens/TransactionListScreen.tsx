@@ -5,7 +5,8 @@ import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
 import { LoadingState } from '../components/LoadingState';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-
+import { COLORS } from '../constants/colors';
+import { STRINGS } from '../constants/strings';
 import { TransactionItem } from '../components/TransactionItem';
 import { RootStackParamList } from '../navigation/types';
 import { useTransactionStore } from '../store/transactionStore';
@@ -58,8 +59,8 @@ export const TransactionListScreen = () => {
         onRefresh={refreshTransactions}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.title}>Recent Transactions</Text>
-            <Text style={styles.subtitle}>Your latest account activity</Text>
+            <Text style={styles.title}>{STRINGS.recentTranscs}</Text>
+            <Text style={styles.subtitle}>{STRINGS.latestActivity}</Text>
           </View>
         }
         ListEmptyComponent={<EmptyState />}
@@ -74,7 +75,7 @@ export const TransactionListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: COLORS.background,
   },
 
   header: {
@@ -85,12 +86,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: COLORS.textPrimary,
   },
   subtitle: {
     marginTop: 4,
     fontSize: 14,
-    color: '#6B6B6B',
+    color: COLORS.textSecondary,
   },
   emptyListContent: {
     flexGrow: 1,

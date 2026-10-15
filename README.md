@@ -87,16 +87,17 @@ The repository includes screenshots of the key user flows under `src/assets`.
 
 <p align="center">
   <img src="src/assets/Welcome.png" width="220" alt="Welcome Screen" />
-  <img src="src/assets/TransactionList.png" width="220" alt="Transaction List Screen" />
+  <img src="src/assets/TransactionDetailList.png" width="220" alt="Transaction List Screen" />
   <img src="src/assets/TransactionDetails.png" width="220" alt="Transaction Details Screen" />
 </p>
 
 <p align="center">
+  <img src="src/assets/TransactionDetailsCopy.png" width="220" alt="Copy Reference ID Feedback" />
   <img src="src/assets/Search.png" width="220" alt="Transaction Search" />
   <img src="src/assets/Share.png" width="220" alt="Native Share Sheet" />
 </p>
 
-The screenshots demonstrate the welcome flow, grouped transaction history, search experience, transaction details, and native sharing functionality.
+The screenshots demonstrate the welcome flow, grouped transaction history, transaction details, copy-reference feedback, search, and native sharing functionality.
 
 ## Project Structure
 
@@ -108,6 +109,13 @@ src/
 
 │   └── transactionApi.ts
 
+├── assets/
+│   ├── Search.png
+│   ├── Share.png
+│   ├── TransactionDetailList.png
+│   ├── TransactionDetails.png
+│   ├── TransactionDetailsCopy.png
+│   └── Welcome.png
 ├── components/
 
 │   ├── DetailRow.tsx
